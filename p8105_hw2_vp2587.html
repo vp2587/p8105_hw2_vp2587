@@ -387,16 +387,33 @@ month, and organize so that year and month are the leading columns.</h4>
 <pre class="r"><code>snp_df = 
   read.csv(&quot;fivethirtyeight_datasets/snp.csv&quot;, na = c(&quot;NA&quot;,&quot;.&quot;,&quot;&quot;)) %&gt;% 
   janitor::clean_names() %&gt;% 
-  separate(date, into = c(&quot;year&quot;, &quot;month&quot;, &quot;day&quot;), convert = TRUE) %&gt;% 
-  mutate(month = factor(month.name[month], levels = month.name, ordered = TRUE)) %&gt;% 
+  mutate(
+    date = mdy(date),
+    year = year(date),
+    month = factor(month.name[month(date)], levels = month.name, ordered = TRUE)
+  ) %&gt;% 
   arrange(year, month) %&gt;% 
-  select(year, month, everything())</code></pre>
+  select(year, month, close)</code></pre>
 </div>
 <div id="third-tidy-the-unemployment-data-so-that-it-can-be-merged-with-the-previous-datasets.-this-process-will-involve-switching-from-wide-to-long-format-ensuring-that-key-variables-have-the-same-name-and-ensuring-that-key-variables-take-the-same-values." class="section level4">
 <h4>Third, tidy the unemployment data so that it can be merged with the
 previous datasets. This process will involve switching from “wide” to
 “long” format; ensuring that key variables have the same name; and
 ensuring that key variables take the same values.</h4>
+<pre class="r"><code>unemployment_df = 
+  read.csv(&quot;fivethirtyeight_datasets/unemployment.csv&quot;, na = c(&quot;NA&quot;,&quot;.&quot;,&quot;&quot;)) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  pivot_longer(
+    col = jan:dec,
+    names_to = &quot;month&quot;,
+    values_to = &quot;unemployment_rate&quot;
+  ) %&gt;% 
+  mutate(
+    month_num = match(str_to_title(month), month.abb),
+    month = factor(month.name[month_num], levels = month.name, ordered = TRUE)
+  ) %&gt;% 
+  select(year, month, unemployment_rate) %&gt;% 
+  arrange(year, month)</code></pre>
 </div>
 <div id="join-the-datasets-by-merging-snp-into-pols-and-merging-unemployment-into-the-result." class="section level4">
 <h4>Join the datasets by merging snp into pols, and merging unemployment
