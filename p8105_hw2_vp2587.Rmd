@@ -11,7 +11,14 @@ output: html_document
 #### First, clean the data in pols-month.csv. Use separate() to break up the variable mon into integer variables year, month, and day; replace month number with month name; create a president variable taking values gop and dem, and remove prez_dem and prez_gop; and remove the day variable.
 ```{r setup, include = FALSE}
 library(tidyverse)
-read_csv("fivethirtyeight_datasets/pols-month.csv")
+```
+
+```{r pols-month}
+pols_month_df = 
+  read.csv("fivethirtyeight_datasets/pols-month.csv", na = c("NA",".","")) %>% 
+  janitor::clean_names() %>% 
+  separate(mon, into = c("year", "month", "day")) %>% 
+  mutate(month = factor(month.name[month], levels = month.name)
 ```
 
 #### Second, clean the data in snp.csv using a similar process to the above. For consistency across datasets, arrange according to year and month, and organize so that year and month are the leading columns.
