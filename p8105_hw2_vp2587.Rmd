@@ -1,0 +1,6 @@
+---
+title: "P8105 HW2"
+author: "Veerapetch Petchger"
+date: "2025-10-01"
+output: html_document
+---
