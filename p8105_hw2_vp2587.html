@@ -384,6 +384,13 @@ select(-day, -prez_dem, -prez_gop)</code></pre>
 <h4>Second, clean the data in snp.csv using a similar process to the
 above. For consistency across datasets, arrange according to year and
 month, and organize so that year and month are the leading columns.</h4>
+<pre class="r"><code>snp_df = 
+  read.csv(&quot;fivethirtyeight_datasets/snp.csv&quot;, na = c(&quot;NA&quot;,&quot;.&quot;,&quot;&quot;)) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  separate(date, into = c(&quot;year&quot;, &quot;month&quot;, &quot;day&quot;), convert = TRUE) %&gt;% 
+  mutate(month = factor(month.name[month], levels = month.name, ordered = TRUE)) %&gt;% 
+  arrange(year, month) %&gt;% 
+  select(year, month, everything())</code></pre>
 </div>
 <div id="third-tidy-the-unemployment-data-so-that-it-can-be-merged-with-the-previous-datasets.-this-process-will-involve-switching-from-wide-to-long-format-ensuring-that-key-variables-have-the-same-name-and-ensuring-that-key-variables-take-the-same-values." class="section level4">
 <h4>Third, tidy the unemployment data so that it can be merged with the
