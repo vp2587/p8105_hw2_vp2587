@@ -372,6 +372,13 @@ the variable mon into integer variables year, month, and day; replace
 month number with month name; create a president variable taking values
 gop and dem, and remove prez_dem and prez_gop; and remove the day
 variable.</h4>
+<pre class="r"><code>pols_month_df = 
+  read.csv(&quot;fivethirtyeight_datasets/pols-month.csv&quot;, na = c(&quot;NA&quot;,&quot;.&quot;,&quot;&quot;)) %&gt;% 
+  janitor::clean_names() %&gt;% 
+  separate(mon, into = c(&quot;year&quot;, &quot;month&quot;, &quot;day&quot;), convert = TRUE) %&gt;% 
+  mutate(month = factor(month.name[month], levels = month.name, ordered = TRUE),
+         president = if_else(prez_gop == 1, &quot;gop&quot;, &quot;dem&quot;)) %&gt;%
+select(-day, -prez_dem, -prez_gop)</code></pre>
 </div>
 <div id="second-clean-the-data-in-snp.csv-using-a-similar-process-to-the-above.-for-consistency-across-datasets-arrange-according-to-year-and-month-and-organize-so-that-year-and-month-are-the-leading-columns." class="section level4">
 <h4>Second, clean the data in snp.csv using a similar process to the
