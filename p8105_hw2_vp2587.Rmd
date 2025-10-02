@@ -159,3 +159,30 @@ trash_df =
 
 The Trash Wheel dataset combines information from 3 of Baltimore's trash-collecting water wheels, named Mr. Trash Wheel, Professor Trash Wheel, and Gwynnda. After thorough cleaning and merging, the combined dataset contains `r nrow(trash_df)` observations of dumpster collections. Each row represents a collection event for a single dumpster, separated by the `date`, the amount of trash collected (`weight_tons`), with specific insights on the kinds of trash collected. These include `plastic_bags`, `glass_bottles`, and `sports_balls`. Professor Trash Wheel collected a total of `r sum(professor_df$weight_tons)` tons of trash, , while Gywnnda collected `r sum(filter(gwynnda_df, month == "June", year == 2022)$cigarette_butts)` in June 2022. 
 
+## Problem 3
+#### Home and rental prices have generally increased over the last decade. Zillow, a popular website used to search for homes for sale or rent, is uniquely positioned to provide insights into trends in the real estate market. In response to broad interest, the company releases data for research. In this project, we’ll look at the Zillow Observed Rent Index (ZORI) in New York City between January 2015 and August 2024.
+
+#### NYC is divided into five boroughs. Each of these boroughs is it’s own county, and in some cases the borough name and county name differ; for example, Manhattan is New York County. Moreover, boroughs are divided into neighborhoods. Rental price data provided by Zillow does not include information neighborhoods within boroughs, but can be accessed separately.
+
+#### Both datasets are available here.
+
+#### Create a single, well-organized dataset with all the information contained in these data files. To that end: import, clean, tidy, and otherwise wrangle each of these datasets; check for completeness and correctness across datasets (e.g. by viewing individual datasets and monitoring warning messages); merge to create a single, final dataset; and organize this so that variables and observations are in meaningful orders.
+```{r zip_codes}
+zip_codes_df =
+  read_csv("zillow_data/Zip Codes.csv") %>% 
+  janitor::clean_names()
+  
+zip_cols = colnames(zip_codes_df)
+```
+
+```{r zora}
+zora_df =
+  read_csv("zillow_data/Zip_zori_uc_sfrcondomfr_sm_month_NYC.csv") %>% 
+  janitor::clean_names()
+```
+
+#### Briefly describe the resulting tidy dataset. How many total observations exist? How many unique ZIP codes are included, and how many unique neighborhoods?
+
+#### Which ZIP codes appear in the ZIP code dataset but not in the Zillow Rental Price dataset? Using a few illustrative examples discuss why these ZIP codes might be excluded from the Zillow dataset.
+
+#### Rental prices fluctuated dramatically during the COVID-19 pandemic. For all available ZIP codes, compare rental prices in January 2021 to prices in January 2020. Make a table that shows the 10 ZIP codes (along with the borough and neighborhood) with largest drop in price from January 2020 to 2021. Comment.
