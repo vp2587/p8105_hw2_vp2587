@@ -89,15 +89,73 @@ wheel_df =
             range = "A2:N710",
             na = c("NA",".","")
             ) %>% 
-  janitor::clean_names() %>%
+  janitor::clean_names() %>% 
+  select(-contains("note"), 
+         -contains("figure"), 
+         -contains("source"), 
+         -contains("footer"), 
+         everything()) %>%  
   filter(!is.na(dumpster)) %>% 
-  mutate(sports_balls = as.integer(round(sports_balls, 0)))
+  mutate(
+    across(any_of("sports_balls"), ~ as.integer(round(.x))),
+    wheel = "Mr. Trash Wheel") %>% 
+  relocate(wheel) %>% 
+  mutate(year = suppressWarnings(as.integer(year)))
 ```
   
 #### Use a similar process to import, clean, and organize the data for Professor Trash Wheel and Gwynnda, and combine this with the Mr. Trash Wheel dataset to produce a single tidy dataset. To keep track of which Trash Wheel is which, you may need to add an additional variable to both datasets before combining.
 
+```{r professor}
+professor_df = 
+  read_excel("202509 Trash Wheel Collection Data.xlsx", 
+            sheet = "Professor Trash Wheel", 
+            skip = 1,
+            na = c("NA",".","")
+            ) %>% 
+  janitor::clean_names() %>% 
+  select(-contains("note"), 
+         -contains("figure"), 
+         -contains("source"), 
+         -contains("footer"), 
+         everything()) %>%  
+  filter(!is.na(dumpster)) %>% 
+  mutate(
+    across(any_of("sports_balls"), ~ as.integer(round(.x))),
+    wheel = "Professor Trash Wheel"
+  ) %>%  
+  relocate(wheel) %>% 
+  mutate(year = suppressWarnings(as.integer(year)))
+```
+
+```{r gwynnda}
+gwynnda_df = 
+  read_excel("202509 Trash Wheel Collection Data.xlsx", 
+            sheet = "Gwynns Falls Trash Wheel",
+            na = c("NA",".","")
+            ) %>% 
+  janitor::clean_names() %>% 
+  select(-contains("note"), 
+         -contains("figure"), 
+         -contains("source"), 
+         -contains("footer"), 
+         everything()) %>%  
+  filter(!is.na(dumpster)) %>% 
+  mutate(
+    across(any_of("sports_balls"), ~ as.integer(round(.x))),
+    wheel = "Gwynns Falls Trash Wheel"
+  ) %>%  
+  relocate(wheel) %>% 
+  mutate(year = suppressWarnings(as.integer(year)))
+```
+
+```{r trash_merge}
+trash_df = 
+  bind_rows(wheel_df, professor_df, gwynnda_df) %>%
+  arrange(wheel, year, month, dumpster) %>%
+  select(any_of(c("wheel","year","month","date","dumpster")), everything())
+```
 
 #### Write a paragraph about these data; you are encouraged to use inline R. Be sure to note the number of observations in the resulting dataset, and give examples of key variables. For available data, what was the total weight of trash collected by Professor Trash Wheel? What was the total number of cigarette butts collected by Gwynnda in June of 2022?
 
-
+The Trash Wheel dataset combines information from 3 of Baltimore's trash-collecting water wheels, named Mr. Trash Wheel, Professor Trash Wheel, and Gwynnda. After thorough cleaning and merging, the combined dataset contains `r nrow(trash_df)` observations of dumpster collections. Each row represents a collection event for a single dumpster, separated by the `date`, the amount of trash collected (`weight_tons`), with specific insights on the kinds of trash collected. These include `plastic_bags`, `glass_bottles`, and `sports_balls`. Professor Trash Wheel collected a total of `r sum(professor_df$weight_tons)` tons of trash, , while Gywnnda collected `r sum(filter(gwynnda_df, month == "June", year == 2022)$cigarette_butts)` in June 2022. 
 
